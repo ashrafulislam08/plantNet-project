@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-const AddPlantForm = ({ handleSubmit }) => {
+const AddPlantForm = ({ handleSubmit, uploadImage, setUploadImage }) => {
   return (
     <div className="w-full min-h-[calc(100vh-40px)] flex flex-col justify-center items-center text-gray-800 rounded-xl bg-gray-50">
       <form onSubmit={handleSubmit}>
@@ -91,18 +91,39 @@ const AddPlantForm = ({ handleSubmit }) => {
                     <input
                       className="text-sm cursor-pointer w-36 hidden"
                       type="file"
+                      onChange={(e) =>
+                        setUploadImage({
+                          image: e.target.files[0],
+                          url: URL.createObjectURL(e.target.files[0]),
+                        })
+                      }
                       name="image"
                       id="image"
                       accept="image/*"
                       hidden
                     />
                     <div className="bg-lime-500 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-lime-500">
-                      Upload
+                      {uploadImage?.image?.name}
                     </div>
                   </label>
                 </div>
               </div>
             </div>
+
+            {uploadImage && uploadImage?.image.size && (
+              <>
+                <div className="flex gap-5 items-center">
+                  <img
+                    className="w-20 rounded-md"
+                    src={uploadImage?.url}
+                    alt=""
+                  />
+                  <p className="font-bold">
+                    Image Size: {uploadImage?.image?.size}Bytes
+                  </p>
+                </div>
+              </>
+            )}
 
             {/* Submit Button */}
             <button
