@@ -100,9 +100,15 @@ async function run() {
     });
 
     // save a plant data to db
-    app.post("/plants", async (req, res) => {
+    app.post("/plants", verifyToken, async (req, res) => {
       const newPlant = req.body;
       const result = await plantsCollection.insertOne(newPlant);
+      res.send(result);
+    });
+
+    // get all plants from db
+    app.get("/plants", async (req, res) => {
+      const result = await plantsCollection.find().toArray();
       res.send(result);
     });
 
