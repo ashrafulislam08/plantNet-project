@@ -31,6 +31,7 @@ const PurchaseModal = ({ plant, closeModal, isOpen, refetch }) => {
     price: totalPrice,
     quantity: totalQuantity,
     address: "",
+    seller: seller?.email,
     status: "Pending",
   });
 
@@ -52,8 +53,17 @@ const PurchaseModal = ({ plant, closeModal, isOpen, refetch }) => {
     });
   };
 
-  const handlePurchase = async () => {
-    console.log(purchaseInfo);
+  const handlePurchase = async (e) => {
+    e.preventDefault();
+    // post request in db
+    try {
+      await axiosSecure.post("/order", purchaseInfo);
+      toast.success("Order placed successfully");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      closeModal();
+    }
   };
 
   // Total Price Calculation
@@ -128,7 +138,10 @@ const PurchaseModal = ({ plant, closeModal, isOpen, refetch }) => {
                   />
                 </div>
                 <div className="mt-3">
-                  <Button label={`Pay now $${totalPrice || ""}`} />
+                  <Button
+                    onClick={handlePurchase}
+                    label={`Pay $${totalPrice || 0}`}
+                  />
                 </div>
               </DialogPanel>
             </TransitionChild>
