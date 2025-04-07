@@ -50,6 +50,7 @@ async function run() {
   const db = client.db("plant-net");
   const usersCollection = db.collection("users");
   const plantsCollection = db.collection("plants");
+  const ordersCollection = db.collection("orders");
 
   try {
     // save or update user
@@ -117,6 +118,14 @@ async function run() {
       const result = await plantsCollection.findOne({
         _id: new ObjectId(req.params.id),
       });
+      res.send(result);
+    });
+
+    // post order route
+    app.post("/order", verifyToken, async (req, res) => {
+      const plantInfo = req.body;
+      console.log(plantInfo);
+      const result = await ordersCollection.insertOne(plantInfo);
       res.send(result);
     });
 
