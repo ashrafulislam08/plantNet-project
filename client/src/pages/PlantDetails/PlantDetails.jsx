@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import LoadingSpinner from "../../components/Shared/LoadingSpinner";
 
 const PlantDetails = () => {
   const { id } = useParams();
@@ -30,6 +31,8 @@ const PlantDetails = () => {
   };
 
   console.log(plant);
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <Container>
@@ -94,7 +97,7 @@ const PlantDetails = () => {
                 text-neutral-500
               "
             >
-              Quantity: {plant.quantity} Units Left Only!
+              Quantity: {plant?.quantity} Units Left Only!
             </p>
           </div>
           <hr className="my-6" />
@@ -103,12 +106,20 @@ const PlantDetails = () => {
               Price: {plant?.price}$
             </p>
             <div>
-              <Button label="Purchase" />
+              <Button
+                onClick={() => setIsOpen(true)}
+                label={plant?.quantity > 0 ? "Purchase" : "Out of Stock"}
+              />
             </div>
           </div>
           <hr className="my-6" />
 
-          <PurchaseModal closeModal={closeModal} isOpen={isOpen} />
+          <PurchaseModal
+            plant={plant}
+            closeModal={closeModal}
+            isOpen={isOpen}
+            refetch={refetch}
+          />
         </div>
       </div>
     </Container>
