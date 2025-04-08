@@ -130,9 +130,10 @@ async function run() {
     });
 
     // manage plants quantity
-    app.patch("/plants/quantity/:id", async (req, res) => {
+    app.patch("/plants/quantity/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const { quantityToUpdated } = req.body;
+      console.log(typeof quantityToUpdated, quantityToUpdated);
       const filter = { _id: new ObjectId(id) };
       let updatedDoc = {
         $inc: {
