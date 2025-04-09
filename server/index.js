@@ -132,12 +132,12 @@ async function run() {
     // manage plants quantity
     app.patch("/plants/quantity/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
-      const { quantityToUpdated } = req.body;
-      console.log(typeof quantityToUpdated, quantityToUpdated);
+      const { quantityToUpdate } = req.body;
+      console.log(typeof quantityToUpdate, quantityToUpdate);
       const filter = { _id: new ObjectId(id) };
       let updatedDoc = {
         $inc: {
-          quantity: -quantityToUpdated,
+          quantity: -quantityToUpdate,
         },
       };
 
