@@ -141,6 +141,24 @@ const PurchaseModal = ({ plant, closeModal, isOpen, refetch }) => {
                     required
                   />
                 </div>
+                <div className="space-x-2 mt-2 text-sm">
+                  <label htmlFor="address" className=" text-gray-600">
+                    Address:
+                  </label>
+                  <input
+                    className="p-2 text-gray-800 border border-lime-300 focus:outline-lime-500 rounded-md bg-white"
+                    name="address"
+                    id="address"
+                    onChange={(e) =>
+                      setPurchaseInfo((prv) => {
+                        return { ...prv, address: e.target.value };
+                      })
+                    }
+                    type="text"
+                    placeholder="Shipping Address.."
+                    required
+                  />
+                </div>
                 <div className="mt-3">
                   <Button
                     onClick={handlePurchase}
