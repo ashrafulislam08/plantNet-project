@@ -145,6 +145,14 @@ async function run() {
       res.send(result);
     });
 
+    // get all customer orders
+    app.get("/customer-orders/:email", verifyToken, async (req, res) => {
+      const email = req.params.email;
+      const query = { "customer.email": email };
+      const result = await ordersCollection.find(query).toArray();
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
