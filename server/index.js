@@ -132,7 +132,7 @@ async function run() {
     // manage plants quantity
     app.patch("/plants/quantity/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
-      const { quantityToUpdate } = req.body;
+      const { quantityToUpdate, status } = req.body;
       console.log(typeof quantityToUpdate, quantityToUpdate);
       const filter = { _id: new ObjectId(id) };
       let updatedDoc = {
@@ -191,6 +191,9 @@ async function run() {
     app.delete("/orders/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
+      const order = await ordersCollection.findOne(query);
+      if (order.status === "delivered")
+        return res.status(409).send("Cannot cancel once the product delivered");
       const result = await ordersCollection.deleteOne(query);
       res.send(result);
     });
