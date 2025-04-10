@@ -13,7 +13,7 @@ const PlantDetails = () => {
   const { id } = useParams();
   let [isOpen, setIsOpen] = useState(false);
   const {
-    data: plant,
+    data: plant = {},
     isLoading,
     refetch,
   } = useQuery({
