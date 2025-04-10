@@ -177,8 +177,21 @@ async function run() {
               category: "$plants.category",
             },
           },
+          {
+            $project: {
+              plants: 0,
+            },
+          },
         ])
         .toArray();
+      res.send(result);
+    });
+
+    // cancel or delete an order
+    app.delete("/orders/:id", verifyToken, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await ordersCollection.deleteOne(query);
       res.send(result);
     });
 
