@@ -71,6 +71,28 @@ async function run() {
       });
       res.send(result);
     });
+
+    // manage user status and role
+    app.patch("/users/:email", verifyToken, async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await usersCollection.findOne(query);
+      if (!user || user?.status === "Requested") {
+        return res
+          .status(400)
+          .send("You have already requested, wait for some time");
+      }
+
+      const updatedDoc = {
+        $set: {
+          status: "Requested",
+        },
+      };
+
+      const result = await usersCollection.updateOne(query, updatedDoc);
+      res.send(result);
+    });
+
     // Generate jwt token
     app.post("/jwt", async (req, res) => {
       const email = req.body;
