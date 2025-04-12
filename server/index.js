@@ -100,6 +100,12 @@ async function run() {
       res.send({ role: result?.role });
     });
 
+    // get all users
+    app.get("/all-users", async (req, res) => {
+      const result = await usersCollection.find({}).toArray();
+      res.send(result);
+    });
+
     // Generate jwt token
     app.post("/jwt", async (req, res) => {
       const email = req.body;
