@@ -4,7 +4,7 @@ import useAuth from "../../hooks/useAuth";
 import { toast } from "react-hot-toast";
 import { TbFidgetSpinner } from "react-icons/tb";
 import axios from "axios";
-import { imageUpload } from "../../api/utils";
+import { imageUpload, saveUser } from "../../api/utils";
 
 const SignUp = () => {
   const { createUser, updateUserProfile, signInWithGoogle, loading } =
@@ -31,11 +31,13 @@ const SignUp = () => {
       await updateUserProfile(name, image_url);
       console.log(result);
 
-      await saveUser({
+      const data = await saveUser({
         ...result?.user,
         displayName: name,
         photoURL: image_url,
       });
+
+      console.log(data);
 
       navigate("/");
       toast.success("Signup Successful");
@@ -49,10 +51,11 @@ const SignUp = () => {
   const handleGoogleSignIn = async () => {
     try {
       //User Registration using google
-      const { data } = await signInWithGoogle();
-      await saveUser(data?.user);
+      const { user } = await signInWithGoogle();
+      const userData = await saveUser(user);
+      console.log(userData);
 
-      navigate("/");
+      // navigate("/");
       toast.success("Signup Successful");
     } catch (err) {
       console.log(err);
