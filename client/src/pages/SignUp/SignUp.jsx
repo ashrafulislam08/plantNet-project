@@ -52,10 +52,9 @@ const SignUp = () => {
     try {
       //User Registration using google
       const { user } = await signInWithGoogle();
-      const userData = await saveUser(user);
-      console.log(userData);
+      await saveUser(user);
 
-      // navigate("/");
+      navigate("/");
       toast.success("Signup Successful");
     } catch (err) {
       console.log(err);
