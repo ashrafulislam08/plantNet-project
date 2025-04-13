@@ -2,6 +2,7 @@ import { useState } from "react";
 import UpdateUserModal from "../../Modal/UpdateUserModal";
 import PropTypes from "prop-types";
 import useAxiosSecure from "./../../../hooks/useAxiosSecure";
+import { toast } from "react-hot-toast";
 const UserDataRow = ({ userData, refetch }) => {
   const [isOpen, setIsOpen] = useState(false);
   const axiosSecure = useAxiosSecure();
@@ -10,6 +11,7 @@ const UserDataRow = ({ userData, refetch }) => {
     if (role === selectedRole) return;
     try {
       await axiosSecure.patch(`/user/role/${email}`, { role: selectedRole });
+      toast.success("Role updated successfully!");
       refetch();
     } catch (error) {
       console.log(error);
