@@ -65,8 +65,20 @@ async function run() {
 
       next();
     };
+    // verify seller middleware
+    const verifySeller = async (req, res, next) => {
+      const email = req.user?.email;
+      const query = { email };
+      const result = await usersCollection.findOne(query);
+      if (!result || result?.role !== "seller")
+        return res
+          .status(403)
+          .send({ message: "Forbidden access! Seller Only Actions" });
 
-    // save or update user
+      next();
+    };
+
+    // save  user
     app.post("/users/:email", async (req, res) => {
       const email = req.params.email;
       const user = req.body;
@@ -114,7 +126,7 @@ async function run() {
     });
 
     // get all users
-    app.get("/all-users/:email", verifyToken, async (req, res) => {
+    app.get("/all-users/:email", verifyToken, verifyAdmin, async (req, res) => {
       const email = req.params.email;
       const query = { email: { $ne: email } };
       const result = await usersCollection.find(query).toArray();
@@ -122,19 +134,24 @@ async function run() {
     });
 
     //  update a user role and status
-    app.patch("/user/role/:email", verifyToken, async (req, res) => {
-      const email = req.params.email;
-      const { role } = req.body;
-      const filter = { email };
-      const updatedDoc = {
-        $set: {
-          role,
-          status: "Verified",
-        },
-      };
-      const result = await usersCollection.updateOne(filter, updatedDoc);
-      res.send(result);
-    });
+    app.patch(
+      "/user/role/:email",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        const email = req.params.email;
+        const { role } = req.body;
+        const filter = { email };
+        const updatedDoc = {
+          $set: {
+            role,
+            status: "Verified",
+          },
+        };
+        const result = await usersCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+      }
+    );
 
     // Generate jwt token
     app.post("/jwt", async (req, res) => {
