@@ -10,7 +10,7 @@ const MyInventory = () => {
   const axiosSecure = useAxiosSecure();
 
   const {
-    data: plants,
+    data: plants = [],
     isLoading,
     refetch,
   } = useQuery({
