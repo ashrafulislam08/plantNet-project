@@ -183,7 +183,7 @@ async function run() {
     });
 
     // save a plant data to db
-    app.post("/plants", verifyToken, async (req, res) => {
+    app.post("/plants", verifyToken, verifySeller, async (req, res) => {
       const newPlant = req.body;
       const result = await plantsCollection.insertOne(newPlant);
       res.send(result);
