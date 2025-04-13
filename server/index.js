@@ -125,6 +125,22 @@ async function run() {
       res.send({ role: result?.role });
     });
 
+    // get inventory data for seller
+    app.get(
+      "/plants/seller/:email",
+      verifyToken,
+      verifySeller,
+      async (req, res) => {
+        const email = req.params.email;
+        const result = await plantsCollection
+          .find({
+            "seller.email": email,
+          })
+          .toArray();
+        res.send(result);
+      }
+    );
+
     // get all users
     app.get("/all-users/:email", verifyToken, verifyAdmin, async (req, res) => {
       const email = req.params.email;
