@@ -47,12 +47,25 @@ const client = new MongoClient(uri, {
   },
 });
 async function run() {
-  const db = client.db("plant-net");
-  const usersCollection = db.collection("users");
-  const plantsCollection = db.collection("plants");
-  const ordersCollection = db.collection("orders");
-
   try {
+    const db = client.db("plant-net");
+    const usersCollection = db.collection("users");
+    const plantsCollection = db.collection("plants");
+    const ordersCollection = db.collection("orders");
+
+    // verify admin middleware
+    const verifyAdmin = async (req, res, next) => {
+      const email = req.user?.email;
+      const query = { email };
+      const result = await usersCollection.findOne(query);
+      if (!result || result?.role !== "admin")
+        return res
+          .status(403)
+          .send({ message: "Forbidden access! Admins Only Actions" });
+
+      next();
+    };
+
     // save or update user
     app.post("/users/:email", async (req, res) => {
       const email = req.params.email;
@@ -111,12 +124,12 @@ async function run() {
     //  update a user role and status
     app.patch("/user/role/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
-      const { role, status } = req.body;
+      const { role } = req.body;
       const filter = { email };
       const updatedDoc = {
         $set: {
           role,
-          status,
+          status: "Verified",
         },
       };
       const result = await usersCollection.updateOne(filter, updatedDoc);
