@@ -299,6 +299,50 @@ async function run() {
         .toArray();
       res.send(result);
     });
+    // get all customer orders
+    app.get(
+      "/seller-orders/:email",
+      verifyToken,
+      verifySeller,
+      async (req, res) => {
+        const email = req.params.email;
+        const query = { "seller.email": email };
+        const result = await ordersCollection
+          .aggregate([
+            {
+              $match: query,
+            },
+            {
+              $addFields: {
+                plantId: { $toObjectId: "$plantId" },
+              },
+            },
+            {
+              $lookup: {
+                from: "plants",
+                localField: "plantId",
+                foreignField: "_id",
+                as: "plants",
+              },
+            },
+            {
+              $unwind: "$plants",
+            },
+            {
+              $addFields: {
+                name: "$plants.name",
+              },
+            },
+            {
+              $project: {
+                plants: 0,
+              },
+            },
+          ])
+          .toArray();
+        res.send(result);
+      }
+    );
 
     // cancel or delete an order
     app.delete("/orders/:id", verifyToken, async (req, res) => {
