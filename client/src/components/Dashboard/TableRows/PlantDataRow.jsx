@@ -39,7 +39,7 @@ const PlantDataRow = ({ plant, refetch }) => {
             <div className="block relative">
               <img
                 alt="profile"
-                src="https://i.ibb.co.com/rMHmQP2/money-plant-in-feng-shui-brings-luck.jpg"
+                src={image}
                 className="mx-auto object-cover rounded h-10 w-15 "
               />
             </div>
