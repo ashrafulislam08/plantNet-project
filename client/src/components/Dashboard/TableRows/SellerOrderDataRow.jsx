@@ -14,15 +14,16 @@ const SellerOrderDataRow = ({ orderData, refetch }) => {
   const handleDelete = async () => {
     try {
       // fetch delete request
-      await axiosSecure.delete(`/orders/${plantId}`);
+      await axiosSecure.delete(`/orders/${_id}`);
       await axiosSecure.patch(`/plants/quantity/${plantId}`, {
         quantityToUpdate: quantity,
         status: "increase",
       });
       toast.success("Order Cancelled.");
     } catch (err) {
-      console.log(err);
       toast.error(err.response.data);
+    } finally {
+      closeModal();
     }
   };
 
