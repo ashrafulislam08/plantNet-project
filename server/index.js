@@ -120,11 +120,6 @@ async function run() {
     // save  user
     app.post("/users/:email", async (req, res) => {
       const email = req.params.email;
-      sendEmail(email, {
-        subject: "Successfully login to PlantNet",
-        message:
-          "Thanks bro for joining with us. We will help you as much as possible",
-      });
       const user = req.body;
 
       // check if user exist
@@ -273,9 +268,22 @@ async function run() {
 
     // post order route
     app.post("/order", verifyToken, async (req, res) => {
-      const plantInfo = req.body;
-      console.log(plantInfo);
-      const result = await ordersCollection.insertOne(plantInfo);
+      const orderInfo = req.body;
+      console.log(orderInfo);
+      const result = await ordersCollection.insertOne(orderInfo);
+      // send email
+      if (result?.insertedId) {
+        // To customer
+        sendEmail(orderInfo?.customer?.email, {
+          subject: "Order Successful",
+          message: `You've placed an order successfully. Transaction Id: ${result?.insertedId}`,
+        });
+        // To customer
+        sendEmail(orderInfo?.seller, {
+          subject: "Hurray! You have an order to process.",
+          message: `Get the plants ready for ${orderInfo?.customer?.name}`,
+        });
+      }
       res.send(result);
     });
 
