@@ -7,7 +7,7 @@ const SellerOrderDataRow = ({ orderData, refetch }) => {
   let [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(false);
   const axiosSecure = useAxiosSecure();
-  const { name, customer, price, quantity, address, status, plantId } =
+  const { name, customer, price, quantity, address, status, plantId, _id } =
     orderData;
 
   // handle order delete/cancellation
@@ -24,6 +24,21 @@ const SellerOrderDataRow = ({ orderData, refetch }) => {
       console.log(err);
       toast.error(err.response.data);
     }
+  };
+
+  const handleStatus = async (newStatus) => {
+    if (status === newStatus) return;
+    try {
+      await axiosSecure.patch(`/orders/${_id}`, {
+        status: newStatus,
+      });
+      refetch();
+      toast.success("Status changed!");
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response.data);
+    }
+    console.log(newStatus);
   };
 
   return (
@@ -54,6 +69,7 @@ const SellerOrderDataRow = ({ orderData, refetch }) => {
             className="p-1 border-2 border-lime-300 focus:outline-lime-500 rounded-md text-gray-900 whitespace-no-wrap bg-white"
             name="category"
             defaultValue={status}
+            onChange={(e) => handleStatus(e.target.value)}
           >
             <option value="Pending">Pending</option>
             <option value="In Progress">Start Processing</option>

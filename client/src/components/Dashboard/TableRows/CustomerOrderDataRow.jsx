@@ -63,6 +63,7 @@ const CustomerOrderDataRow = ({ order, refetch }) => {
 
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
         <button
+          disabled={status === "Delivered"}
           onClick={() => setIsOpen(true)}
           className="relative disabled:cursor-not-allowed cursor-pointer inline-block px-3 py-1 font-semibold text-lime-900 leading-tight"
         >
