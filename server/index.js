@@ -310,7 +310,7 @@ async function run() {
         const result = await ordersCollection
           .aggregate([
             {
-              $match: query,
+              $match: { seller: email },
             },
             {
               $addFields: {
@@ -343,6 +343,19 @@ async function run() {
         res.send(result);
       }
     );
+
+    // update order status
+    app.patch("/orders/:id", verifyToken, verifySeller, async (req, res) => {
+      const id = req.params.id;
+      const { status } = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: { status },
+      };
+
+      const result = await ordersCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
 
     // cancel or delete an order
     app.delete("/orders/:id", verifyToken, async (req, res) => {
