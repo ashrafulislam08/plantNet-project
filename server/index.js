@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
 const morgan = require("morgan");
+const nodemailer = require("nodemailer");
 
 const port = process.env.PORT || 9000;
 const app = express();
@@ -33,6 +34,44 @@ const verifyToken = async (req, res, next) => {
     }
     req.user = decoded;
     next();
+  });
+};
+
+// send email using nodemailer
+const sendEmail = (emailAddress, emailData) => {
+  // create transporter
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, // true for port 465, false for other ports
+    auth: {
+      user: process.env.NODEMAILER_USER,
+      pass: process.env.NODEMAILER_PASS,
+    },
+  });
+
+  // verify connection
+  transporter.verify((error, success) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("transporter is ready to send mail", success);
+    }
+  });
+
+  const mailBody = {
+    from: process.env.NODEMAILER_USER, // sender address
+    to: emailAddress, // list of receivers
+    subject: emailData?.subject, // Subject line
+    html: `<p>${emailData?.message}</p>`, // html body
+  };
+
+  transporter.sendMail(mailBody, (error, info) => {
+    if (error) {
+      console.log("error", error);
+    } else {
+      console.log("Email sent: " + info?.response);
+    }
   });
 };
 
@@ -81,6 +120,11 @@ async function run() {
     // save  user
     app.post("/users/:email", async (req, res) => {
       const email = req.params.email;
+      sendEmail(email, {
+        subject: "Successfully login to PlantNet",
+        message:
+          "Thanks bro for joining with us. We will help you as much as possible",
+      });
       const user = req.body;
 
       // check if user exist
@@ -362,7 +406,8 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const order = await ordersCollection.findOne(query);
-      if (order.status === "delivered")
+      console.log("order data", order);
+      if (order.status === "Delivered")
         return res.status(409).send("Cannot cancel once the product delivered");
       const result = await ordersCollection.deleteOne(query);
       res.send(result);
