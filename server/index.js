@@ -421,6 +421,14 @@ async function run() {
       res.send(result);
     });
 
+    // admin stats
+    app.get("/admin-stats", verifyToken, verifyAdmin, async (req, res) => {
+      // GET total plant and total users
+      const totalUsers = usersCollection.countDocuments({ role: "admin" });
+      const totalPlants = plantsCollection.estimatedDocumentCount();
+      res.send({ totalUsers, totalPlants });
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
